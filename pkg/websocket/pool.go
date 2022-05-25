@@ -28,14 +28,16 @@ func (pool *Pool) Start() {
 			pool.Clients[client] = true
 			log.Println("Size pool:", len(pool.Clients))
 			for client := range pool.Clients {
-				message := fmt.Sprintf("New User Joined...\n%d User on Group", len(pool.Clients))
+				message := fmt.Sprintf("%d User on Group", len(pool.Clients))
+				client.Conn.WriteJSON("New User Joined...")
 				client.Conn.WriteJSON(message)
 			}
 		case client := <-pool.Unregister:
 			delete(pool.Clients, client)
 			log.Println("Size pool:", len(pool.Clients))
 			for client := range pool.Clients {
-				message := fmt.Sprintf("User Left...\n%d User on Group", len(pool.Clients))
+				message := fmt.Sprintf("%d User on Group", len(pool.Clients))
+				client.Conn.WriteJSON("User Left...")
 				client.Conn.WriteJSON(message)
 			}
 		case message := <-pool.Broadcast:
