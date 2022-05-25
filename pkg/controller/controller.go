@@ -5,7 +5,6 @@ import (
 	"github.com/kompiangg/chatapp/pkg/websocket"
 
 	PingControllerPkg "github.com/kompiangg/chatapp/internal/ping/controller"
-	PingApiPkg "github.com/kompiangg/chatapp/internal/ping/service"
 
 	webSocketControllerPkg "github.com/kompiangg/chatapp/internal/websocket/controller"
 	WebSocketApiImpl "github.com/kompiangg/chatapp/internal/websocket/service/impl"
@@ -14,8 +13,7 @@ import (
 func InitRoutes(pool *websocket.Pool, r *mux.Router) {
 	routes := r.NewRoute().Subrouter()
 
-	pingServiceImpl := PingApiPkg.NewPingService()
-	pingControllerImpl := PingControllerPkg.ProvidePingController(routes, pingServiceImpl)
+	pingControllerImpl := PingControllerPkg.ProvidePingController(routes)
 	pingControllerImpl.InitializeController()
 
 	webSocketService := WebSocketApiImpl.ProvideWebSocketService(pool)

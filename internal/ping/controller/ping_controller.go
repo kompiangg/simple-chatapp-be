@@ -6,17 +6,17 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kompiangg/chatapp/internal/global"
-	"github.com/kompiangg/chatapp/internal/ping/service"
 )
 
 type pingController struct {
 	r *mux.Router
-	p service.PingServiceAPI
 }
 
 func (p pingController) Ping(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(rw).Encode("Message: meow")
+	json.NewEncoder(rw).Encode(map[string]string{
+		"data": "meow",
+	})
 }
 
 func (p *pingController) InitializeController() {
@@ -24,9 +24,8 @@ func (p *pingController) InitializeController() {
 	subRouter.HandleFunc("", p.Ping).Methods(http.MethodGet, http.MethodOptions)
 }
 
-func ProvidePingController(r *mux.Router, p service.PingServiceAPI) *pingController {
+func ProvidePingController(r *mux.Router) *pingController {
 	return &pingController{
 		r: r,
-		p: p,
 	}
 }
