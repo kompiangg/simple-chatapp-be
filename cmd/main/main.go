@@ -11,29 +11,38 @@ import (
 	"github.com/kompiangg/chatapp/pkg/websocket"
 )
 
-func serveWs(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Host)
-
+func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+	log.Println("Websocket EndPoint Hitted")
 	ws, err := websocket.Upgrader(w, r)
 	if err != nil {
 		log.Println(err)
 		fmt.Fprintf(w, "%+V\n", err)
 	}
 
-	go websocket.Writer(ws)
-	websocket.Reader(ws)
+	client := &websocket.Client{
+		Conn: ws,
+		Pool: pool,
+	}
+
+	pool.Register <- client
+	client.Read()
 }
 
-func setupRoutes() {
+func setupRoutes(pool *websocket.Pool) {
 	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode("Meow")
 	})
 
-	http.HandleFunc("/ws", serveWs)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(pool, w, r)
+	})
 }
 
 func main() {
-	setupRoutes()
+	pool := websocket.NewPool()
+	go pool.Start()
+
+	setupRoutes(pool)
 
 	go func ()  {
 		if err := http.ListenAndServe(":8080", nil) ; err != nil {
