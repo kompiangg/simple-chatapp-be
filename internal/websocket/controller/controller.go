@@ -11,13 +11,6 @@ import (
 	"github.com/kompiangg/chatapp/pkg/websocket"
 )
 
-// log.Println("Websocket EndPoint Hitted")
-// 	ws, err := websocket.Upgrader(w, r)
-// 	if err != nil {
-// 		log.Println(err)
-// 		fmt.Fprintf(w, "%+V\n", err)
-// 	}
-
 type webSocketController struct {
 	r *mux.Router
 	s serviceAPI.WebSocketServiceAPI
