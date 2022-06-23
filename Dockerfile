@@ -12,7 +12,7 @@ RUN go mod tidy
 
 COPY . .
 
-RUN go build -o main
+RUN go build /cmd/main -o main
 
 
 FROM alpine:3.16.0
